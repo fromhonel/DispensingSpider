@@ -6,27 +6,27 @@
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
 
+
 from scrapy import signals
 from selenium import webdriver
 from scrapy.http.response.html import HtmlResponse
 import scrapy
 
-class KmustSpiderMiddleware(object):
+
+
+
+class GuetDownloaderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the
     # passed objects.
-
+    def __init__(self):
+        self.driver_path = r"D:\chromedriver\chromedriver.exe"
+        self.driver = webdriver.Chrome(executable_path=self.driver_path)
     
     def process_request(self, request, spider):
-        # Called for each request that goes through the downloader
-        # middleware.
-
-        # Must either:
-        # - return None: continue processing this request
-        # - or return a Response object
-        # - or return a Request object
-        # - or raise IgnoreRequest: process_exception() methods of
-        #   installed downloader middleware will be called
+        self.driver.get(request.url)
+        source = self.driver.page_source
+        response = HtmlResponse(url=self.driver.current_url,body=source,request=request,encoding='utf-8')
         return None
     
     @classmethod
@@ -72,7 +72,8 @@ class KmustSpiderMiddleware(object):
         spider.logger.info('Spider opened: %s' % spider.name)
 
 
-class KmustDownloaderMiddleware(object):
+
+class GuetSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the downloader middleware does not modify the
     # passed objects.
@@ -88,6 +89,7 @@ class KmustDownloaderMiddleware(object):
         # Called for each request that goes through the downloader
         # middleware.
 
+        
         # Must either:
         # - return None: continue processing this request
         # - or return a Response object
@@ -98,7 +100,7 @@ class KmustDownloaderMiddleware(object):
 
     def process_response(self, request, response, spider):
         # Called with the response returned from the downloader.
-     
+
         # Must either;
         # - return a Response object
         # - return a Request object
